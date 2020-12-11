@@ -1,0 +1,7 @@
+curl --data "nick=newperson" -H "Accept: application/json" http://localhost:8080/mod
+
+curl -H "Accept: application/json" http://localhost:808/mod/
+
+curl --data-urlencode "name=Test Channel" --data-urlencode "topics[]=topic1" --data-urlencode "topics[]=topic 2" -d "mods[]=56" -d "mods[]=59" -H "Accept: application/json" http://localhost:8080/channel
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/channel/58/mod/50

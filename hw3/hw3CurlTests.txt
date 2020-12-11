@@ -1,0 +1,116 @@
+#  Assignment3
+#  Micheal Willard
+#  CS496 Oregon State University
+#  To be copy/pasted into the command line.
+#  IDs are unique to each instance of the app being launched,
+#  so the ones in this file may not work.
+dev_appserver.py ./
+
+Tests
+- Create a game
+  Game(Model):
+    opp_name =
+    date
+    time =
+    location =
+    attending = player key
+    not_attending = player key
+- Get a game
+- Delete a game
+- Add a attendee
+- Add a non_attendee
+
+- Create a player
+- Get a player
+
+
+#  GOOGLE INSTANCE TESTS
+https://hw3api.appspot.com
+
+curl --data-urlencode "opp_name=Rays" --data-urlencode "date=7-30-2016" --data-urlencode "time=6:00 PM" --data-urlencode "location=Bannerwood Park" -H "Accept: application/json" https://hw3api.appspot.com/game
+
+curl --data-urlencode "opp_name=Diablos" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Steve Cox" -H "Accept: application/json" https://hw3api.appspot.com/game
+
+curl --data-urlencode "opp_name=Mets" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Chief Sealth" -H "Accept: application/json" https://hw3api.appspot.com/game
+
+curl -H "Accept: application/json" https://hw3api.appspot.com/game
+
+- Create a player
+curl --data "name=Micheal Willard" --data "email=michealwillard@gmail.com" --data "phone=206-605-4751" -H "Accept: application/json" https://hw3api.appspot.com/player
+
+curl --data "name=Colin Webb" --data "email=colinzwebb@gmail.com" --data "phone=425-736-0961" -H "Accept: application/json" https://hw3api.appspot.com/player
+
+curl --data "name=Ryan Tipper" --data "email=ryantipper@gmail.com" --data "phone=425-555-5555" -H "Accept: application/json" https://hw3api.appspot.com/player
+
+curl --data "name=Sam Gordon" --data "phone=425-555-5555" -H "Accept: application/json" https://hw3api.appspot.com/player
+
+- Get a player by ID
+curl -H "Accept: application/json" https://hw3api.appspot.com/player/5659313586569216
+
+- Get all players
+curl -H "Accept: application/json" https://hw3api.appspot.com/player
+
+- Add a attendee
+curl -X PUT -H "Accept: application/json" -d "" https://hw3api.appspot.com/a/game/5629499534213120/player/5659313586569216
+
+- Add a non_attendee
+curl -X PUT -H "Accept: application/json" -d "" https://hw3api.appspot.com/na/game/5629499534213120/player/5639445604728832
+
+
+#  LOCAL TESTS
+
+- Create a game
+curl --data-urlencode "opp_name=Diablos" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Steve Cox" -H "Accept: application/json" http://localhost:8080/game
+
+curl  --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Steve Cox" -H "Accept: application/json" http://localhost:8080/game
+
+curl --data-urlencode "opp_name=Mets" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Chief Sealth" -H "Accept: application/json" http://localhost:8080/game
+
+curl --data-urlencode "opp_name=Mets" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Chief Sealth" -d "attending[]= 5874690627207168" -H "Accept: application/json" http://localhost:8080/game
+
+curl --data-urlencode "opp_name=Mets" --data-urlencode "date=10-23-2016" --data-urlencode "time=7:00 PM" --data-urlencode "location=Chief Sealth" -d "attending[]= 5874690627207168" -d "not_attending[]= 4748790720364544" -H "Accept: application/json" http://localhost:8080/game
+
+-d "attending[]=" -d "not_attending[]="
+
+- Get all game IDs
+curl -H "Accept: application/json" http://localhost:8080/game
+- Get a game by id
+curl -H "Accept: application/json" http://localhost:8080/game/6218562888794112
+
+- Delete a game by ID
+curl -X DELETE -H "Accept: application/json" http://localhost:8080/delete/game/4811188005240832
+
+- Add a attendee
+curl -X PUT -H "Accept: application/json" http://localhost:8080/a/game/4811188005240832/player/4748790720364544
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/a/game/5126747842412544/player/5655612935372800
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/a/game/6218562888794112/player/5655612935372800
+
+- Add a non_attendee
+curl -X PUT -H "Accept: application/json" http://localhost:8080/na/game/5126747842412544/player/5655612935372800
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/na/game/5126747842412544/player/4748790720364544
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/na/game/5126747842412543/player/4748790720364544
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/na/game/5126747842412544/player/4748790720364544
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/na/game/5126747842412544/player/5874690627207168
+
+- Create a player
+curl --data "name=Micheal Willard" --data "email=michealwillard@gmail.com" --data "phone=206-605-4751" -H "Accept: application/json" http://localhost:8080/player
+
+curl --data "name=Colin Webb" --data "email=colinzwebb@gmail.com" --data "phone=425-736-0961" -H "Accept: application/json" http://localhost:8080/player
+
+curl --data "name=Ryan Tipper" --data "email=ryantipper@gmail.com" --data "phone=425-555-5555" -H "Accept: application/json" http://localhost:8080/player
+
+curl --data "name=Sam Gordon" --data "phone=425-555-5555" -H "Accept: application/json" http://localhost:8080/player
+
+curl --data "phone=425-555-5555" -H "Accept: application/json" http://localhost:8080/player
+
+- Get a player by ID
+curl -H "Accept: application/json" http://localhost:8080/player/5812155903377408
+
+- Get all players
+curl -H "Accept: application/json" http://localhost:8080/player

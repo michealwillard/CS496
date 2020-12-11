@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+    Micheal Willard
+    CS 496
+    Fall 2016
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Swift 3.0 GET and POST</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/blog.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="index.html">Home</a>
+        </nav>
+      </div>
+    </div>
+    <div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title">Swift 3.0 GET and POST</h1>
+        <p class="lead blog-description">by Micheal Willard</p>
+      </div>
+      <div class="row">
+        <div class="col-sm-8 blog-main">
+          <div class="blog-post">
+            <h2 class="blog-post-title">Section 1: Introduction</h2>
+            <hr>
+            <p>
+              This Tutorial will go over the basics of making GET and POST requests to a URL based API using Swift 3.0.  A number of changes have happened between Swift 2.x and Swift 3.0, so there isn’t a wealth of documentation available currently.  Fortunately, most of the deprecated functions names and conventions are recognized by Xcode.  Xcode will often provide you with the ability to update your code to the latest syntax and naming convention.
+            </p>
+            <p>
+                In order to simplify the tutorial, we will be taking some of the focus off the iOS interface creation.  To do this, we will base the project on the Apple Developer site’s <a href=“https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ “>“Start Developing iOS Apps (Swift) tutorial.”</a>  It is recommended that you work through that project prior to implementing the GET and POST calls.  Additionally, the iOS development terminology used in the tutorial will be more familiar to you.
+            </p>
+            <p>
+              This tutorial will show you how to build a table view app that allows you to add an item to the table, view the table and select an item in the table to view details.  This app saves the Objects locally, whereas we want to save them to a cloud database via POST calls and retrieve the objects via GET calls.  But it gives us a good template interface for making these actions.
+            </p>
+            <p>
+              The API used in this tutorial, again, is URL based.  It is a personal API developed for a specific functionality.  In your usage, you can simple swap out the URL strings to make GET and POST calls to the API of your choice.  Section 2 will go into more depth on the API, to give you a better understanding of how to implement your own GET and POST calls into your project.
+            </p>
+
+            <p>
+              This How-To will walk the you through the following items:
+            </p>
+            <p>
+              <ul>
+                <li><a href="index.html">Section 1:  Introduction</a></li>
+                <li><a href="section2.html">Section 2: App and API Overview</a></li>
+                <li><a href="section3.html">Section 3: GET</a></li>
+                <li><a href="section4.html">Section 4: POST</a></li>
+              </ul>
+              <p>
+                As discussed in the <a href=“/index.html”>Introduction</a>, the API is a custom built backend.  The GET and POST calls are URLs that return JSONs.  This JSONs can then be manipulated into the data you display in your app.  This is a common format for a lot of web API, so your approach should be similar enough that you can adapt these methods.
+              </p>
+
+
+              <!-- <img src="images/AtBatApp.png" alt="Scoreboard view for the MLB At Bat App" width="263" height="465" /> -->
+
+          </div><!-- /.blog-post -->
+          <nav>
+            <ul class="pager">
+              <!-- <li><a href="section1.html">Previous</a></li> -->
+              <li><a href="section2.html">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>This site offers a How-To making GET and POST requests in Swift 3.0 in Xcode's iOS development environment.</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Sections</h4>
+            <ol class="list-unstyled">
+              <li><a href="index.html">Section 1:  Introduction</a></li>
+              <li><a href="section2.html">Section 2:  App and API Overview</a></li>
+              <li><a href="section3.html">Section 3:  GET</a></li>
+              <li><a href="section4.html">Section 4: POST</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+        <h4>Elsewhere</h4>
+        <ol class="list-unstyled">
+          <li><a href="https://github.com/michealwillard">GitHub</a></li>
+        </ol>
+      </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div>
+
+    <footer class="blog-footer">
+      <p class="text-muted"><a href="http://michealwillard.com">&copy; Micheal Willard 2016</a></p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

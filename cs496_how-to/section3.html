@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+    Micheal Willard
+    CS 496
+    Fall 2016
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Swift 3.0 GET and POST</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/blog.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="index.html">Home</a>
+        </nav>
+      </div>
+    </div>
+    <div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title">Swift 3.0 GET and POST</h1>
+        <p class="lead blog-description">by Micheal Willard</p>
+      </div>
+      <div class="row">
+        <div class="col-sm-8 blog-main">
+          <div class="blog-post">
+            <h2 class="blog-post-title">Section 3: GET</h2>
+            <hr>
+            <p>
+            There are a couple steps to making a GET request and then being able to use that data.
+            <ol>
+              <li>Make the Request to a specified URL</li>
+              <li>Receive the Response</li>
+              <li>Parse the Response as JSON</li>
+              <li>Assign the JSON to a Local Object</li>
+            </ol>
+            It is also possible to simple act on the data dynamically, by skipping item 4 to some extent.  For the purpose of this app I chose to load the data, create local objects and then when a new object has been added to the database, we reload the data and create new local objects.
+          </p>
+          <p>
+            Prior to making the GET request, we need to setup our Game Objects.  In Xcode, you will want to make a new swift file, and name it <code>Object.swift</code> or in the case of this tutorial, it is named <code>Game.swift</code>.  We are going to define the objects as classes, the same as how they built the <a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/Lesson6.html#//apple_ref/doc/uid/TP40015214-CH20-SW1">data models</a> in the tutorial.
+
+            Here is the class that was used in this app:
+            <pre><code>
+              class Game {
+                // MARK:  Properties
+                var game_id: Int
+                var opp_name: String
+                var location: String
+                var date: String
+                var time: String
+                var attending: [Int]
+                var not_attending: [Int]
+
+                // MARK: Initialization
+                init?(game_id: Int, opp_name: String, location: String, date: String, time: String, attending: [Int], not_attending: [Int]) {
+                  self.game_id = game_id
+                  self.opp_name = opp_name
+                  self.location = location
+                  self.date = date
+                  self.time = time
+                  self.attending = attending
+                  self.not_attending = not_attending
+
+                  if opp_name.isEmpty || location.isEmpty || date.isEmpty || time.isEmpty {
+                    return nil
+                  }
+                }
+              }
+            </code></pre>
+            The opp_name, location, date and time are all required in this application.
+          </p>
+          <p>
+            Since we using the <a href=“https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/ “>“Start Developing iOS Apps (Swift) tutorial”</a> we will reference it when describing when and where in the code to make the GET and POST requests.
+
+            There is only one logical place to make the GET request.  We need to do it on the Table View Controller, within the <code>override fund viewDidLoad()</code> function.  We can see <a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/Lesson7.html#//apple_ref/doc/uid/TP40015214-CH8-SW1">here</a> in the tutorial down at the <b>Load Initial Data Section</b>, that this is the perfect time to implement a function we will call <code>loadGames()</code>.
+          </p>
+          <hr>
+          <h3> 1. Make the Request to a specified URL</h3>
+          <p>
+            We have a few steps to take when first making the GET call.
+            <ol>
+              <li>Mutate the URL string (requestURL) to a NSURL object</li>
+              <li>Mutate the NSURL to a NSMutableURLRequest</li>
+              <li>Open a URLSession</li>
+            </ol>
+            <pre><code>
+              // Make GET call
+              let requestURL: NSURL = NSURL(string: "https://hw3api.appspot.com/game")!
+              let urlRequest: NSMutableURLRequest = NSMutableURLRequest(url: requestURL as URL)
+              let session = URLSession.shared
+            </code></pre>
+          </p>
+            <hr>
+
+            <h3>2. Receive the Response</h3>
+            <p>
+              We want this call to be Asynchronous to avoid any net work issues.  Do do that, we need a <a href="https://developer.apple.com/reference/foundation/urlsession/1411554-datatask">dataTask</a>.  The <code>dataTask()</code> function creates a task that retrieves the contents of the specified URL. After the call happens, we call the task to resume.
+            </p>
+            <p>
+              In addition we will need to check the HTTP response for errors.  Let’s look at the call now.
+            </p>
+            <p>
+              <pre><code>
+                let requestURL: NSURL = NSURL(string: "https://hw3api.appspot.com/game")!
+                let urlRequest: NSMutableURLRequest = NSMutableURLRequest(url: requestURL as URL)
+                let session = URLSession.shared
+                let task = session.dataTask(with: urlRequest as URLRequest) {
+                  (data, response, error) -> Void in
+                  let httpResponse = response as! HTTPURLResponse
+                  let statusCode = httpResponse.statusCode
+                  if (statusCode == 200) {
+                    print("JSON Retrieved Successfully.")
+                  }
+                }
+                task.resume()
+              </code></pre>
+            </p>
+            <hr>
+            <h3>3. Parse the Response as JSON</h3>
+            <p>
+              We have now hopefully made a call to an API and received a response.  We need to take that response and parse it as a JSON before we can use it.  Let’s use a do loop with a catch and then call the swift <a href="https://developer.apple.com/reference/foundation/jsonserialization">JSONSerialization</a> class.  The JSONSerialization class converts JSON to Foundation objects and convert sFoundation objects to JSON.
+            </p>
+            <p>
+              We then use the <a href="https://developer.apple.com/reference/foundation/jsonserialization/1418059-jsonobject">jsonObject</a> method.  This will return a Foundation object from JSON data in our given stream.  We will place the following code after the <code>print("JSON Retrieved Successfully.”)</code> call and inside the <code>if (statusCode == 200)</code> conditional
+            </p>
+            <p>
+              <pre><code>
+                do {
+                  let json = try JSONSerialization.jsonObject(with: data!, options:.allowFragments)
+                  if let gamelist = json as? [[String: AnyObject]] {
+
+                  }
+                }catch {
+                  print("Error with JSON: \(error)")
+                }
+              </code></pre>
+            </p>
+            <hr>
+            <h3>Assign the JSON to a Local Object</h3>
+            <p>
+              All that is left now is iterating through the list of son objects, creating a class object and appending that class object to the list of objects.  It should be noted that within the <code>class GameTableViewController: UITableViewController </code> we had to declare an empty list of Game objects: <code>var games = [Game]()</code>.   If you are familiar JSONs at all, this will be pretty straightforward, with the exception of the <code>if let</code> statements.  We add these to control for any required data we want back from the database.
+            </p>
+            <p>
+              Since this is an asynchronous request, we also need to make a call to refresh the tableview after the GET happens and the objects are populated.  To do this, we add <code> self.tableView.reloadData()</code> in the loop.
+            </p>
+            <p>
+            <pre><code>
+              for game in gamelist {
+                if let name = game["opp_name"] as? String {
+                  if let location = game["location"] as? String {
+                    if let date = game["date"] as? String {
+                      if let time = game["time"] as? String {
+                        let id = game["key"] as? Int
+                        let newGame = Game(game_id: id!, opp_name: name, location: location, date: date, time: time, attending: [], not_attending: [])
+                        self.games.append(newGame!)
+                        self.tableView.reloadData()
+                      }
+                    }
+                  }
+                }
+              }
+            </pre></code></p>
+
+
+
+
+          </div><!-- /.blog-post -->
+          <nav>
+            <ul class="pager">
+              <li><a href="section2.html">Previous</a></li>
+              <li><a href="section4.html">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>This site offers a How-To making GET and POST requests in Swift 3.0 in Xcode's iOS development environment.</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Sections</h4>
+            <ol class="list-unstyled">
+              <li><a href="index.html">Section 1:  Introduction</a></li>
+              <li><a href="section2.html">Section 2:  App and API Overview</a></li>
+              <li><a href="section3.html">Section 3:  GET</a></li>
+              <li><a href="section4.html">Section 4: POST</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+        <h4>Elsewhere</h4>
+        <ol class="list-unstyled">
+          <li><a href="https://github.com/michealwillard">GitHub</a></li>
+        </ol>
+      </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div>
+
+    <footer class="blog-footer">
+      <p class="text-muted"><a href="http://michealwillard.com">&copy; Micheal Willard 2016</a></p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

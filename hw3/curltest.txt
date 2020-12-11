@@ -1,0 +1,17 @@
+curl --data "nick=newperson" -H "Accept: application/json" http://localhost:8080/mod
+
+curl -H "Accept: application/json" http://localhost:8080/mod
+
+curl -H "Accept: application/json" http://localhost:8080/channel
+
+curl -H "Accept: application/json" http://localhost:8080/channel/5275456790069248
+
+curl -X DELETE -H "Accept: application/json" http://localhost:8080/delete/channel/5275456790069248
+
+curl  --data-urlencode "topics[]=topic1" --data-urlencode "topics[]=topic 2" -d "mods[]=	5629499534213120"  -H "Accept: application/json" http://localhost:8080/channel
+
+curl --data-urlencode "name=Test Channel 2" --data-urlencode "topics[]=topic 3" --data-urlencode "topics[]=topic 4" -d "mods[]=	5629499534213120"  -H "Accept: application/json" http://localhost:8080/channel
+
+curl --data-urlencode "name=Test Channel 3" -H "Accept: application/json" http://localhost:8080/channel
+
+curl -X PUT -H "Accept: application/json" http://localhost:8080/channel/5760616295825408/mod/5629499534213120

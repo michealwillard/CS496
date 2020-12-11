@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+    Micheal Willard
+    CS 496
+    Fall 2016
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Swift 3.0 GET and POST</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/blog.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="index.html">Home</a>
+        </nav>
+      </div>
+    </div>
+    <div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title">Swift 3.0 GET and POST</h1>
+        <p class="lead blog-description">by Micheal Willard</p>
+      </div>
+      <div class="row">
+        <div class="col-sm-8 blog-main">
+          <div class="blog-post">
+            <h2 class="blog-post-title">Section 4: POST</h2>
+            <hr>
+            <p>
+              The POST call you may expect to be more complicated than the GET.  It actually isn’t that much more complicated.  The trickiest part is figuring out where to place the call.  Fortunately, we have been following along with the Basic UI Tutorial and can navigate to the <b><a href="https://developer.apple.com/library/content/referencelibrary/GettingStarted/DevelopiOSAppsSwift/Lesson8.html#//apple_ref/doc/uid/TP40015214-CH16-SW1">Create an Unwind Segue</a></b> section.  This section creates the <code>override func prepare(for segue: UIStoryboardSegue, sender: Any?)</code> function which is triggered when the <b>Save</b> button is triggered from the Add Game View Controller.  This is where we will place our POST request code.
+            </p>
+            <p>
+              The first step is to examine our example CURL Request from <a href=“/section2.html”>Section 2</a>.
+            </p><p><pre><code>
+              curl --data-urlencode "opp_name=Rays" --data-urlencode "date=7-30-2016" --data-urlencode "time=6:00 PM" --data-urlencode "location=Bannerwood Park" -H "Accept: application/json" https://hw3api.appspot.com/game
+            </code></pre></p>
+            <p>
+              We then need to make sure we are getting the contents of the text fields that are displayed in the Add Game View Controller.  This code is similar to what you would see in the Apple Developer Tutorial.
+            </p><p><pre><code>
+              let opp_name = opp_nameTextField.text ?? ""
+              let location = locationTextField.text ?? ""
+              let date = dateTextField.text ?? ""
+              let time = timeTextField.text ?? “"
+            </code></pre></p>
+            <p>
+              Just place those calls after the <code>if saveButton === sender as AnyObject? </code> conditional.  That conditional checks to confirm the sender to the sequel function was the Save button.
+            </p>
+            <p>
+              Now we are ready to start building the POST call.  We use the following steps:
+              <ol>
+                <li>Set up our <a href="https://developer.apple.com/reference/foundation/urlrequest">URLRequest</a> to be the base URL we have previously discussed.</li>
+                <li>Set the HTTP Method to be POST.</li>
+                <li>Construct a string that relates to our CURL request.  </li>
+              </ol>
+            </p>
+            <p><pre><code>
+var request = URLRequest(url: URL(string: "https://hw3api.appspot.com/game")!)
+request.httpMethod = "POST"
+let postString = "opp_name=" + opp_name + "&date=" + date + "&time=" + time + "&location=" + location
+request.httpBody = postString.data(using: .utf8)
+            </code></pre></p>
+            <p>
+              Now, just as we did with the GET call, we want to establish this as a asynchronous call.  For that we will need to define a task.
+              <p><pre><code>
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+
+}
+task.resume()
+              </code></pre></p>
+              <p>
+                Within the task, we need to setup some error checking, to ensure the POST was successful.  This can be done by checking for a fundamental network error and then checking for the Status Code 200.  We will use a guard to check the data and an if to check the response.  For debugging purposes, let’s print the responses out to the console.
+              </p>
+              <p><pre><code>
+guard let data = data, error == nil else {
+  print("error=\(error)")
+  return
+}
+if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+  print("statusCode should be 200, but is \(httpStatus.statusCode)")
+  print("response = \(response)")
+}
+              </code></pre></p>
+              <p>
+                Now we will add one little bit of code to act as additional debugging.  Let’s set the response string and print that to the console.
+              </p>
+              <p><pre><code>
+let responseString = String(data: data, encoding: .utf8)
+print("responseString = \(responseString)")
+              </code></pre></p>
+              <p>
+                Now finally, let's confirm that we have the full POST call.
+              </p>
+              <p><pre><code>
+var request = URLRequest(url: URL(string: "https://hw3api.appspot.com/game")!)
+request.httpMethod = "POST"
+
+let postString = "opp_name=" + opp_name + "&date=" + date + "&time=" + time + "&location=" + location
+request.httpBody = postString.data(using: .utf8)
+let task = URLSession.shared.dataTask(with: request) { data, response, error in
+  guard let data = data, error == nil else {
+      print("error=\(error)")
+        return
+  }
+  if let httpStatus = response as? HTTPURLResponse, httpStatus.statusCode != 200 {
+    print("statusCode should be 200, but is \(httpStatus.statusCode)")
+    print("response = \(response)")
+  }
+  let responseString = String(data: data, encoding: .utf8)
+  print("responseString = \(responseString)")
+}
+task.resume()
+            </code></pre></p>
+            <p>
+              That should be enough for you to get started on making your own Table Based API sourcing app.
+            </p>
+
+          </div><!-- /.blog-post -->
+          <nav>
+            <ul class="pager">
+              <li><a href="section3.html">Previous</a></li>
+              <!-- <li><a href="section3.html">Next</a></li> -->
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>This site offers a How-To making GET and POST requests in Swift 3.0 in Xcode's iOS development environment.</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Sections</h4>
+            <ol class="list-unstyled">
+              <li><a href="index.html">Section 1:  Introduction</a></li>
+              <li><a href="section2.html">Section 2:  App and API Overview</a></li>
+              <li><a href="section3.html">Section 3:  GET</a></li>
+              <li><a href="section4.html">Section 4: POST</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+        <h4>Elsewhere</h4>
+        <ol class="list-unstyled">
+          <li><a href="https://github.com/michealwillard">GitHub</a></li>
+        </ol>
+      </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div>
+
+    <footer class="blog-footer">
+      <p class="text-muted"><a href="http://michealwillard.com">&copy; Micheal Willard 2016</a></p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+    Micheal Willard
+    CS 496
+    Fall 2016
+    -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+    <title>Swift 3.0 GET and POST</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="css/blog.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="blog-masthead">
+      <div class="container">
+        <nav class="blog-nav">
+          <a class="blog-nav-item active" href="index.html">Home</a>
+        </nav>
+      </div>
+    </div>
+    <div class="container">
+      <div class="blog-header">
+        <h1 class="blog-title">Swift 3.0 GET and POST</h1>
+        <p class="lead blog-description">by Micheal Willard</p>
+      </div>
+      <div class="row">
+        <div class="col-sm-8 blog-main">
+          <div class="blog-post">
+            <h2 class="blog-post-title">Section 2: App and API Overview</h2>
+            <hr>
+            <p>
+              <h3>App Overview</h3>
+            </p>
+            <p>
+              Let’s start by looking at an overview of the application that was built using the GET and POST commands that follow.  This will allow you to get a better understanding of how to implement the GET and POST calls into your own project.
+            </p>
+            <p>
+              This app is a simple baseball game scheduling app.  A user adds a game to their schedule and can view the schedule in the table view.  The user can then select a game from the table view to view the details of that game.  It’s very simple and straightforward.  For your application, the games can be any object.  Like the Apple Developer tutorial, mentioned in the <a href="/index.html">Introduction</a>, the objects could be meals.  Essentially any object you are storing in a cloud database would be able to be used in a similar manner to the game objects in this application.
+            </p>
+
+            <p>
+              <img src="images/tableView.png" alt="Scheduler Table View" width="263" height="465" />
+            </p>
+            <p>
+              Let’s take a look at the Table View.  This is the main page of the App.  From here you can see our objects (each game) populating their own table cell.  This is a very intuitive use of the <a href="https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/TableView_iPhone/AboutTableViewsiPhone/AboutTableViewsiPhone.html">Table View Controller</a> in iOS programming.  Each object populates a a row in the table.  On the top navigation bar, we see a “+” sign for adding a game to the schedule.
+            </p>
+            <p>
+              <img src="images/gameView.png" alt="Scheduler Game View" width="263" height="465" />
+            </p>
+            <p>
+              If we click (or touch) a game cell, we are taken to a new <a href="https://developer.apple.com/library/content/featuredarticles/ViewControllerPGforiPhoneOS/">View Controller</a>.  This is the Game View.  It simply displays the details of the Game Object and a <a href="https://developer.apple.com/reference/mapkit">MapKit</a> map that has a pin dropped on the location of the game.  This map uses the location entity as a string and applies a <a href="https://developer.apple.com/reference/corelocation/clgeocoder/1423509-geocodeaddressstring">reverse-geocoding</a> to turn the location string into coordinates, since that is what MapKit needs to display a pin.
+            </p>
+            <p>
+              <img src="images/addView.png" alt="Scheduler Add View" width="263" height="465" />
+            </p>
+            <p>
+              From the Table View, if we select the “+” icon, we are taken to the Add View.  If you have done some Web Development in the past,  then this will be familiar to you as a web form, with text fields and the Save button acting as a submit button.  The Save button also sends the POST request to the API.  To keep things simple all four input fields are simple text fields and the on the API side, they are stored as strings.  That is an important thing to note.  There are other data types you can use with the POST methods, just be mindful when building the interface and have a strong understanding of the API’s data types the back-end.
+            </p>
+            <p>
+              <hr>
+              <h3>API Overview</h3>
+            </p>
+            <p>
+              The database object we are accessing is the game.  The game entity has the following attributes:
+              <ul>
+                <li>id</li>
+                <li>time</li>
+                <li>location</li>
+                <li>opp_name</li>
+                <li>date</li>
+                <li>[attending]*</li>
+                <li>[not_attending]*</li>
+              </ul>
+              * This app doesn’t actually use the attending, not_attending lists at this time.
+            </p>
+            <p>
+              The base URL of the API is:
+              <br><code>https://hw3api.appspot.com/</code><br>
+
+              The following example CURL call would GET a JSON that has all the games in the db currently.
+              <pre><code>curl -H "Accept: application/json" https://hw3api.appspot.com/game</code></pre>
+              And a JSON return of:
+              <pre>
+              <code>
+                [{
+                   "not_attending": [5639445604728832],
+                   "opp_name": "Diablos",
+                   "attending": [5659313586569216],
+                   "location": "Steve Cox",
+                   "key": 5629499534213120,
+                   "time": "7:00 PM",
+                   "date": "10-23-2016"
+                  },
+                       … etc …
+              </code>
+            </pre>
+            </p>
+            <p>
+              The following example CURL call would POST a new game into the database
+              <pre><code>curl --data-urlencode "opp_name=Rays" --data-urlencode "date=7-30-2016" --data-urlencode "time=6:00 PM" --data-urlencode "location=Bannerwood Park" -H "Accept: application/json" https://hw3api.appspot.com/game</code></pre>
+            </p>
+
+          </div><!-- /.blog-post -->
+          <nav>
+            <ul class="pager">
+              <li><a href="index.html">Previous</a></li>
+              <li><a href="section3.html">Next</a></li>
+            </ul>
+          </nav>
+
+        </div><!-- /.blog-main -->
+
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="sidebar-module sidebar-module-inset">
+            <h4>About</h4>
+            <p>This site offers a How-To making GET and POST requests in Swift 3.0 in Xcode's iOS development environment.</p>
+          </div>
+          <div class="sidebar-module">
+            <h4>Sections</h4>
+            <ol class="list-unstyled">
+              <li><a href="index.html">Section 1:  Introduction</a></li>
+              <li><a href="section2.html">Section 2:  App and API Overview</a></li>
+              <li><a href="section3.html">Section 3:  GET</a></li>
+              <li><a href="section4.html">Section 4: POST</a></li>
+            </ol>
+          </div>
+          <div class="sidebar-module">
+        <h4>Elsewhere</h4>
+        <ol class="list-unstyled">
+          <li><a href="https://github.com/michealwillard">GitHub</a></li>
+        </ol>
+      </div>
+        </div><!-- /.blog-sidebar -->
+
+      </div><!-- /.row -->
+
+    </div>
+
+    <footer class="blog-footer">
+      <p class="text-muted"><a href="http://michealwillard.com">&copy; Micheal Willard 2016</a></p>
+      <p>
+        <a href="#">Back to top</a>
+      </p>
+    </footer>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
